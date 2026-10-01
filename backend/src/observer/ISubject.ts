@@ -4,8 +4,8 @@
 // attach(observer: IObserver<T>): void, detach(observer: IObserver<T>): void y notify(event: T): Promise<void>
 import { IObserver } from "./IObserver.js" //importamos el observer
 
-export interface ISubject<ticket> {
-    attach(observer: IObserver<ticket>): void;
-    detach(observer: IObserver<ticket>): void;
-    notify(event: ticket): Promise<void>
+export interface ISubject<TipoEvento> {
+    attach(observer: IObserver<TipoEvento>): void;
+    detach(observer: IObserver<TipoEvento>): void;
+    notify(event: TipoEvento): Promise<void>
 }
