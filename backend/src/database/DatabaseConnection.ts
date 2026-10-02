@@ -10,7 +10,9 @@ export class DatabaseConnection {
     }
     static getInstance(): DatabaseConnection {  //sin static el metodo perteneceria  a una instancia y nuestro constructor es privado, entonces no se podria instanciar de afuera 
         //una sola instancia
-        DatabaseConnection.instance = new DatabaseConnection() //instanciamos
+        if (DatabaseConnection.instance === undefined){ //si es undefined instanciamos, ahora agregue el if porque sino no cumplia con el singleton ya que en cada llamada instanciaba, ahora si el valor es vacio instancia una sola vez y lo guarda:)
+            DatabaseConnection.instance = new DatabaseConnection() //instanciamos
+        }
         return DatabaseConnection.instance //retornamos 
     }
     async connectDB(): Promise<void> {
