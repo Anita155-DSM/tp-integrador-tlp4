@@ -14,3 +14,12 @@ import path from "node:path";
 dotenv.config({ path: path.resolve(import.meta.dirname, "../../.env") });
 
 console.log(process.env.DB_USER);
+
+import { DatabaseConnection } from "./database/DatabaseConnection.js";
+
+const a = DatabaseConnection.getInstance();
+const b = DatabaseConnection.getInstance();
+console.log(a === b);
+
+await a.connectDB();
+await a.disconnectDB();
