@@ -52,3 +52,17 @@ const h2 = await hasher.hash("secreto123");
 console.log(h1 === h2);                              // false
 console.log(await hasher.compare("secreto123", h1)); // true
 console.log(await hasher.compare("otra", h1));       // false
+
+
+import { JwtService } from "./helpers/JwtService.js";
+
+const jwtService = new JwtService();
+const token = jwtService.sign({ userId: "123" });
+console.log(token);
+console.log(jwtService.verify(token));
+
+try {
+    jwtService.verify(token + "x");
+} catch (e) {
+    console.log("rechazado:", e instanceof Error ? e.message : e);
+}
