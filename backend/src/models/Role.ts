@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { HydratedDocument } from "mongoose";
 
 export interface IRole {
     name: string;
@@ -10,4 +11,5 @@ const roleSchema = new Schema<IRole>({
     permissions: { type: [String], default: [] },
 });
 
+export type RoleDocument = HydratedDocument<IRole>;
 export const Role = model<IRole>("Role", roleSchema);

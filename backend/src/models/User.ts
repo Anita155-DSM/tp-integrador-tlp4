@@ -1,4 +1,5 @@
 import { Schema, model, type Types } from "mongoose";
+import { HydratedDocument } from "mongoose";
 
 export interface IUser {
     name: string;
@@ -14,4 +15,5 @@ const userSchema = new Schema<IUser>({
     role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
 });
 
+export type UserDocument = HydratedDocument<IUser>;
 export const User = model<IUser>("User", userSchema);
