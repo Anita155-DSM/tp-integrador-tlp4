@@ -42,3 +42,13 @@ await notifier.send({
     newStatus: "EN_PROGRESO",
     read: false,
 });
+
+import { PasswordHasher } from "./helpers/PasswordHasher.js";
+
+const hasher = new PasswordHasher();
+const h1 = await hasher.hash("secreto123");
+const h2 = await hasher.hash("secreto123");
+
+console.log(h1 === h2);                              // false
+console.log(await hasher.compare("secreto123", h1)); // true
+console.log(await hasher.compare("otra", h1));       // false
