@@ -1,4 +1,4 @@
-import express, {type Express, type Router} from 'express'
+import express, {Router, type Express} from 'express'
 import { Env } from './config/Env.js'
 import cors from 'cors'
 
@@ -7,10 +7,15 @@ export class App {
 
     constructor(app: Express){
         this.app= express()
-        //ya voy a agregar cors, express.json
-    }
-    registerRouter(){//tiene que recibir un path y un router
+        this.app.use(cors())
+        this.app.use(express.json()) //convierte el cuerpo json a un objeto
+        this.app.get("/api/health", (_req, res)=>{
+            res.json({"status": "ok"}) //si consultan a esta ruta, le dice el estado
+        })
 
+    }
+    registerRouter(path: string, router: Router): void{//recibe un path y un router
+        this.app.use(path, router)
     }
     start(): void {
         this.app.listen(Env.API_PORT, ()=> { console.log(`puerto escuchando al ${Env.API_PORT}`)}) //aca le decimos que escuche el puerto de mi variable de entorno
