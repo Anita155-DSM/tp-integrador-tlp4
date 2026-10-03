@@ -1,6 +1,7 @@
 import express, {Router, type Express} from 'express'
 import { Env } from './config/Env.js'
 import cors from 'cors'
+import { ErrorRequestHandler } from 'express'
 
 export class App {
     private readonly app: Express
@@ -16,6 +17,9 @@ export class App {
     }
     registerRouter(path: string, router: Router): void{//recibe un path y un router
         this.app.use(path, router)
+    }
+    registerErrorHandler(handler: ErrorRequestHandler): void {
+       this.app.use(handler);
     }
     start(): void {
         this.app.listen(Env.API_PORT, ()=> { console.log(`puerto escuchando al ${Env.API_PORT}`)}) //aca le decimos que escuche el puerto de mi variable de entorno
