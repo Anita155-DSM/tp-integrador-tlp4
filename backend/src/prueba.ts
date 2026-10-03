@@ -23,3 +23,9 @@ console.log(a === b);
 
 await a.connectDB();
 await a.disconnectDB();
+
+import { EventPublisher } from "./observer/EventPublisher.js";
+
+const publisher = new EventPublisher<string>();
+publisher.attach({ update: async (e) => console.log("recibí:", e) });
+await publisher.notify("hola");
