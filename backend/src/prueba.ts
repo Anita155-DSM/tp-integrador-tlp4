@@ -29,3 +29,16 @@ import { EventPublisher } from "./observer/EventPublisher.js";
 const publisher = new EventPublisher<string>();
 publisher.attach({ update: async (e) => console.log("recibí:", e) });
 await publisher.notify("hola");
+
+import { ConsoleNotifierAdapter } from "./notifications/ConsoleNotifierAdapter.js";
+
+const notifier = new ConsoleNotifierAdapter();
+await notifier.send({
+    userId: "1",
+    userEmail: "usuario@tp.com",
+    ticketId: "12",
+    ticketTitle: "No anda el mail",
+    previousStatus: "ABIERTO",
+    newStatus: "EN_PROGRESO",
+    read: false,
+});
