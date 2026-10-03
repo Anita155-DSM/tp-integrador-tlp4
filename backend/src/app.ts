@@ -5,7 +5,7 @@ import cors from 'cors'
 export class App {
     private readonly app: Express
 
-    constructor(app: Express){
+    constructor(){
         this.app= express()
         this.app.use(cors())
         this.app.use(express.json()) //convierte el cuerpo json a un objeto
