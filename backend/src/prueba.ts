@@ -66,3 +66,12 @@ try {
 } catch (e) {
     console.log("rechazado:", e instanceof Error ? e.message : e);
 }
+
+import { Seed
+ } from "./database/Seed.js";
+import { UserRepository } from "./repositories/UserRepository.js";
+import { RoleRepository } from "./repositories/RoleRepository.js";
+
+
+const seed = new Seed(new RoleRepository(), new UserRepository(), new PasswordHasher());
+await seed.run();
