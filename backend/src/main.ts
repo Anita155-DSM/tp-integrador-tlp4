@@ -10,7 +10,9 @@ import { Seed } from "./database/Seed.js";
 import { AuthRoutes } from "./routes/AuthRoutes.js";
 import { AuthService } from "./services/AuthService.js";
 import { AuthController } from "./controllers/AuthController.js";
-
+import { AuthMiddleware } from "./middlewares/AuthMiddleware.js";
+import { AuthorizeMiddleware } from "./middlewares/AuthorizeMiddleware.js";
+import { Router } from "express";
 
 
 try {
@@ -27,9 +29,18 @@ try {
     // ESTO ES TODO LO QUE ES Autenticación
     const authService = new AuthService(userRepository, roleRepository, passwordHasher, jwtService);
     const authController = new AuthController(authService);
+    const authMiddleware = new AuthMiddleware(jwtService, authService);
+    const authorizeMiddleware = new AuthorizeMiddleware();
     app.registerRouter("/api/auth", new AuthRoutes(authController).getRouter());
 
-
+    const pruebaRouter = Router();
+    pruebaRouter.get(
+        "/solo-admin",
+        authMiddleware.authenticate,
+        authorizeMiddleware.authorize("user:read"),
+        (_req, res) => { res.json({ ok: true }); },
+    );
+    app.registerRouter("/api/prueba", pruebaRouter);
 
     app.registerErrorHandler(new errorMiddleware().handle);
     app.start()//inicializa el servidor
