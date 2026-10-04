@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mongo:7
+    container_name: tp_mongo  #nombre fijo del contenedor
+    restart: unless-stopped # si se cae o reiniciás la compu, vuelve a arrancar solo
+    environment: #variables que recibe MongoDB DENTRO del contenedor
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports: ## aca va puerto de la compu : puerto dentro del contenedor
+      - "${DB_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
