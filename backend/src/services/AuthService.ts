@@ -1,7 +1,7 @@
 // aca iria toda nuestra regla de negocio donde implementamos todo lo anterior trabajado, osea repositorios, PasswordHasher y JwtService
 
-import type { IUserRepository } from "../interfaces/IUserRepository.js";
-import type { IRoleRepository } from "../interfaces/IRoleRepository.js";
+import type { IUserRepository } from "../repositories/interfaces/IUserRepository.js";
+import type { IRoleRepository } from "../repositories/interfaces/IRoleRepository.js";
 import type { UserDocument } from "../models/User.js";
 import type { PasswordHasher } from "../helpers/PasswordHasher.js";
 import type { JwtService } from "../helpers/JwtService.js";

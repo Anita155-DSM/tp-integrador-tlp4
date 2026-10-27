@@ -1,5 +1,5 @@
-import type { IRoleRepository } from "../interfaces/IRoleRepository.js"
-import type { IUserRepository } from "../interfaces/IUserRepository.js"
+import type { IRoleRepository } from "../repositories/interfaces/IRoleRepository.js"
+import type { IUserRepository } from "../repositories/interfaces/IUserRepository.js"
 import type { PasswordHasher } from "../helpers/PasswordHasher.js"
 
 export class Seed {
