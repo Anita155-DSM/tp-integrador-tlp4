@@ -27,3 +27,23 @@ export interface CreateTicketInput {
 export interface TicketDetail extends Ticket {
   isSubscribed: boolean;
 }
+
+export interface AuthUser {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    permissions: string[];
+}
+
+export interface LoginResponse {
+    token: string;
+    user: AuthUser;
+}
+
+export interface UserSummary {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+}
