@@ -1,4 +1,4 @@
-import type { IRole, RoleDocument } from "../models/Role.js";
+import type { IRole, RoleDocument } from "../../models/Role.js";
 
 export interface IRoleRepository {
     findById(id: string): Promise<RoleDocument | null>;

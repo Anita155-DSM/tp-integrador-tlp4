@@ -1,5 +1,5 @@
 import { Role, type IRole, type RoleDocument } from "../models/Role.js";
-import type { IRoleRepository } from "../interfaces/IRoleRepository.js";
+import type { IRoleRepository } from "./interfaces/IRoleRepository.js";
 
 export class RoleRepository implements IRoleRepository {
     async findById(id: string): Promise<RoleDocument | null> {
