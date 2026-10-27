@@ -19,6 +19,6 @@ export class UserRepository implements IUserRepository {
     }
 
     async updateRole(id: string, roleId: string): Promise<UserDocument | null> {
-        return User.findByIdAndUpdate(id, { role: roleId }, { new: true });
+        return User.findByIdAndUpdate(id, { role: roleId }, { returnDocument: "after" });
     }
 }
