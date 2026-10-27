@@ -3,7 +3,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Navbar } from "./components/Navbar";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
-import { AdminUsersPage } from "./pages/AdminUsersPage";
+import { AdminUserPage } from "./pages/AdminUserPage";
 import { TicketListPage } from "./pages/TicketListPage";
 import { TicketFormPage } from "./pages/TicketFormPage";
 import { TicketDetailPage } from "./pages/TicketDetailPage";
@@ -27,7 +27,7 @@ export function App() {
           </Route>
 
           <Route element={<ProtectedRoute permission="user:read" />}>
-            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/users" element={<AdminUserPage />} />
           </Route>
         </Routes>
       </main>
