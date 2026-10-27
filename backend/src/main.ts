@@ -12,7 +12,6 @@ import { AuthService } from "./services/AuthService.js";
 import { AuthController } from "./controllers/AuthController.js";
 import { AuthMiddleware } from "./middlewares/AuthMiddleware.js";
 import { AuthorizeMiddleware } from "./middlewares/AuthorizeMiddleware.js";
-import { Router } from "express";
 import { UserService } from "./services/UserService.js"; //importaciones para administracion de usuario, nuevo trabajado, de aca hasta userroutes:)
 import { UserController } from "./controllers/UserController.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
@@ -44,14 +43,16 @@ try {
         new UserRoutes(userController, authMiddleware, authorizeMiddleware).getRouter(),
     );
 
-    const pruebaRouter = Router();
-    pruebaRouter.get(
-        "/solo-admin",
-        authMiddleware.authenticate,
-        authorizeMiddleware.authorize("user:read"),
-        (_req, res) => { res.json({ ok: true }); },
-    );
-    app.registerRouter("/api/prueba", pruebaRouter);
+    // const pruebaRouter = Router();
+    // pruebaRouter.get(
+    //     "/solo-admin",
+    //     authMiddleware.authenticate,
+    //     authorizeMiddleware.authorize("user:read"),
+    //     (_req, res) => { res.json({ ok: true }); },
+    // );
+    // app.registerRouter("/api/prueba", pruebaRouter);
+
+    //ACA ABAJO TRABAJA NATA TICKETS Y NOTIFICACIONES
 
     app.registerErrorHandler(new errorMiddleware().handle);
     app.start()//inicializa el servidor
