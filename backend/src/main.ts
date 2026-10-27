@@ -1,4 +1,4 @@
-// console.log('Backend TP integrador iniciado'); //no ahce nada
+// console.log('Backend TP integrador iniciado'); //no hace nada
 import { DatabaseConnection } from "./database/DatabaseConnection.js";
 import { App } from "./app.js";
 import { errorMiddleware } from "./middlewares/ErrorMiddleware.js";
@@ -12,10 +12,24 @@ import { AuthService } from "./services/AuthService.js";
 import { AuthController } from "./controllers/AuthController.js";
 import { AuthMiddleware } from "./middlewares/AuthMiddleware.js";
 import { AuthorizeMiddleware } from "./middlewares/AuthorizeMiddleware.js";
-import { Router } from "express";
 import { UserService } from "./services/UserService.js"; //importaciones para administracion de usuario, nuevo trabajado, de aca hasta userroutes:)
 import { UserController } from "./controllers/UserController.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
+import { TicketRepository } from "./repositories/TicketRepository.js";
+import { SubscriptionRepository } from "./repositories/SubscriptionRepository.js";
+import { NotificationRepository } from "./repositories/NotificationRepository.js";
+import { EventPublisher } from "./observer/EventPublisher.js";
+import { NotifierFactory } from "./notifications/NotifierFactory.js";
+import { TicketService } from "./services/TicketService.js";
+import { SubscriptionService } from "./services/SubscriptionService.js";
+import { NotificationService } from "./services/NotificationService.js";
+import { TicketController } from "./controllers/TicketController.js";
+import { SubscriptionController } from "./controllers/SubscriptionController.js";
+import { NotificationController } from "./controllers/NotificationController.js";
+import { TicketRoutes } from "./routes/TicketRoutes.js";
+import { SubscriptionRoutes } from "./routes/SubscriptionRoutes.js";
+import { NotificationRoutes } from "./routes/NotificationRoutes.js";
+import type { TicketStatusChangedEvent } from "./notifications/TicketStatusChangedEvent.js";
 
 
 try {
@@ -44,14 +58,41 @@ try {
         new UserRoutes(userController, authMiddleware, authorizeMiddleware).getRouter(),
     );
 
-    const pruebaRouter = Router();
-    pruebaRouter.get(
-        "/solo-admin",
-        authMiddleware.authenticate,
-        authorizeMiddleware.authorize("user:read"),
-        (_req, res) => { res.json({ ok: true }); },
+    // tickets, suscripciones y notificaciones
+    const ticketRepository = new TicketRepository();
+    const subscriptionRepository = new SubscriptionRepository();
+    const notificationRepository = new NotificationRepository();
+
+    const eventPublisher = new EventPublisher<TicketStatusChangedEvent>();
+    const notifierFactory = new NotifierFactory(notificationRepository);
+    const notifiers = [notifierFactory.create("inapp"), notifierFactory.create("console")];
+    const notificationService = new NotificationService(
+        subscriptionRepository,
+        userRepository,
+        notificationRepository,
+        notifiers,
     );
-    app.registerRouter("/api/prueba", pruebaRouter);
+    eventPublisher.attach(notificationService);
+
+    const ticketService = new TicketService(ticketRepository, subscriptionRepository, eventPublisher);
+    const ticketController = new TicketController(ticketService);
+    app.registerRouter(
+        "/api/tickets",
+        new TicketRoutes(ticketController, authMiddleware, authorizeMiddleware).getRouter(),
+    );
+
+    const subscriptionService = new SubscriptionService(subscriptionRepository, ticketRepository);
+    const subscriptionController = new SubscriptionController(subscriptionService, ticketService);
+    app.registerRouter(
+        "/api/subscriptions",
+        new SubscriptionRoutes(subscriptionController, authMiddleware, authorizeMiddleware).getRouter(),
+    );
+
+    const notificationController = new NotificationController(notificationService);
+    app.registerRouter(
+        "/api/notifications",
+        new NotificationRoutes(notificationController, authMiddleware, authorizeMiddleware).getRouter(),
+    );
 
     app.registerErrorHandler(new errorMiddleware().handle);
     app.start()//inicializa el servidor
