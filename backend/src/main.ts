@@ -1,4 +1,4 @@
-// console.log('Backend TP integrador iniciado'); //no ahce nada 
+// console.log('Backend TP integrador iniciado'); //no ahce nada
 import { DatabaseConnection } from "./database/DatabaseConnection.js";
 import { App } from "./app.js";
 import { errorMiddleware } from "./middlewares/ErrorMiddleware.js";
@@ -13,10 +13,13 @@ import { AuthController } from "./controllers/AuthController.js";
 import { AuthMiddleware } from "./middlewares/AuthMiddleware.js";
 import { AuthorizeMiddleware } from "./middlewares/AuthorizeMiddleware.js";
 import { Router } from "express";
+import { UserService } from "./services/UserService.js"; //importaciones para administracion de usuario, nuevo trabajado, de aca hasta userroutes:)
+import { UserController } from "./controllers/UserController.js";
+import { UserRoutes } from "./routes/UserRoutes.js";
 
 
 try {
-    await DatabaseConnection.getInstance().connectDB() 
+    await DatabaseConnection.getInstance().connectDB()
     const app = new App() //aca crea el servidor Express, o sea aca va el new, porque main.ts es el unico lugar donde se crean las piezas
 
     const roleRepository = new RoleRepository()
@@ -31,7 +34,15 @@ try {
     const authController = new AuthController(authService);
     const authMiddleware = new AuthMiddleware(jwtService, authService);
     const authorizeMiddleware = new AuthorizeMiddleware();
-    app.registerRouter("/api/auth", new AuthRoutes(authController).getRouter());
+    app.registerRouter("/api/auth", new AuthRoutes(authController, authMiddleware).getRouter());
+
+    // administración de usuarios
+    const userService = new UserService(userRepository, roleRepository);
+    const userController = new UserController(userService);
+    app.registerRouter(
+        "/api/users",
+        new UserRoutes(userController, authMiddleware, authorizeMiddleware).getRouter(),
+    );
 
     const pruebaRouter = Router();
     pruebaRouter.get(

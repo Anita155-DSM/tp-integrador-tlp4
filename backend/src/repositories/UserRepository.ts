@@ -1,5 +1,5 @@
 import { User, type IUser, type UserDocument } from "../models/User.js";
-import type { IUserRepository } from "../interfaces/IUserRepository.js";
+import type { IUserRepository } from "./interfaces/IUserRepository.js";
 
 export class UserRepository implements IUserRepository {
     async findById(id: string): Promise<UserDocument | null> {
@@ -19,6 +19,6 @@ export class UserRepository implements IUserRepository {
     }
 
     async updateRole(id: string, roleId: string): Promise<UserDocument | null> {
-        return User.findByIdAndUpdate(id, { role: roleId }, { new: true });
+        return User.findByIdAndUpdate(id, { role: roleId }, { returnDocument: "after" });
     }
 }

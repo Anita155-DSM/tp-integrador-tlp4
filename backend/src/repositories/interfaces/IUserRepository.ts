@@ -1,4 +1,4 @@
-import type { IUser, UserDocument } from "../models/User.js"
+import type { IUser, UserDocument } from "../../models/User.js"
 
 export interface IUserRepository {
     findById(id: string): Promise<UserDocument | null>;

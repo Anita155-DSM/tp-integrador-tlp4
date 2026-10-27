@@ -7,7 +7,7 @@ export class AuthController {
 
     register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password } = req.body ?? {};
             if (typeof name !== "string" || name.trim() === "") {
                 throw AppError.BadRequest("El nombre es obligatorio");
             }
@@ -17,7 +17,7 @@ export class AuthController {
             if (typeof password !== "string" || password.length < 6) {
                 throw AppError.BadRequest("La contraseña debe tener al menos 6 caracteres");
             }
-            const user = await this.authService.register({ name: name, email, password });
+            const user = await this.authService.register({ name: name.trim(), email, password });
             res.status(201).json(user);
         } catch (error) {
             next(error);
@@ -26,7 +26,7 @@ export class AuthController {
 
     login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { email, password } = req.body;
+            const { email, password } = req.body ?? {};
             if (typeof email !== "string" || typeof password !== "string") {
                 throw AppError.BadRequest("Email y contraseña son obligatorios");
             }
@@ -35,5 +35,9 @@ export class AuthController {
         } catch (error) {
             next(error);
         }
+    };
+    //nuevo metodo me
+    me = (req: Request, res: Response): void => {
+        res.json(req.user);
     };
 }
