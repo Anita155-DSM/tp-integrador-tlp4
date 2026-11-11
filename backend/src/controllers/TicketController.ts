@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../errors/AppError.js";
+import { RequestHelper } from "../helpers/RequestHelper.js";
 import { TICKET_STATUSES, type TicketStatus } from "../models/Ticket.js";
 import type { TicketService } from "../services/TicketService.js";
 
@@ -17,8 +18,8 @@ export class TicketController {
 
   getById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = this.getUserId(req);
-      const ticket = await this.ticketService.getById(this.getId(req), userId);
+      const userId = RequestHelper.getUserId(req);
+      const ticket = await this.ticketService.getById(RequestHelper.requireObjectId(req.params.id), userId);
       res.json(ticket);
     } catch (error) {
       next(error);
@@ -28,8 +29,8 @@ export class TicketController {
   create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const body = req.body as { title?: unknown; description?: unknown };
-      const title = this.requireString(body.title, "título");
-      const description = this.requireString(body.description, "descripción");
+      const title = RequestHelper.requireString(body.title, "título");
+      const description = RequestHelper.requireString(body.description, "descripción");
       const ticket = await this.ticketService.create({ title, description });
       res.status(201).json(ticket);
     } catch (error) {
@@ -40,9 +41,9 @@ export class TicketController {
   update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const body = req.body as { title?: unknown; description?: unknown };
-      const title = this.requireString(body.title, "título");
-      const description = this.requireString(body.description, "descripción");
-      const ticket = await this.ticketService.update(this.getId(req), { title, description });
+      const title = RequestHelper.requireString(body.title, "título");
+      const description = RequestHelper.requireString(body.description, "descripción");
+      const ticket = await this.ticketService.update(RequestHelper.requireObjectId(req.params.id), { title, description });
       res.json(ticket);
     } catch (error) {
       next(error);
@@ -51,12 +52,12 @@ export class TicketController {
 
   changeStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = this.getUserId(req);
+      const userId = RequestHelper.getUserId(req);
       const status = (req.body as { status?: unknown }).status;
       if (typeof status !== "string" || !TICKET_STATUSES.includes(status as TicketStatus)) {
         throw AppError.BadRequest("Estado inválido");
       }
-      const ticket = await this.ticketService.changeStatus(this.getId(req), userId, status as TicketStatus);
+      const ticket = await this.ticketService.changeStatus(RequestHelper.requireObjectId(req.params.id), userId, status as TicketStatus);
       res.json(ticket);
     } catch (error) {
       next(error);
@@ -65,33 +66,10 @@ export class TicketController {
 
   delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.ticketService.delete(this.getId(req));
+      await this.ticketService.delete(RequestHelper.requireObjectId(req.params.id));
       res.status(204).send();
     } catch (error) {
       next(error);
     }
   };
-
-  private getUserId(req: Request): string {
-    const user = req.user;
-    if (user === undefined) {
-      throw AppError.Unauthorized();
-    }
-    return user.id;
-  }
-
-  private requireString(value: unknown, field: string): string {
-    if (typeof value !== "string" || value.trim() === "") {
-      throw AppError.BadRequest(`El campo ${field} es obligatorio`);
-    }
-    return value;
-  }
-
-  private getId(req: Request): string {
-  const id = req.params.id;
-  if (typeof id !== "string") {
-    throw AppError.BadRequest("Id inválido");
-  }
-  return id;
-}
 }
