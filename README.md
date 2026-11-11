@@ -1,11 +1,13 @@
 # tp-integrador-tlp4
 
-**Dominio:** A — Mesa de ayuda **Base de datos:** MongoDB + Mongoose **Organización del backend:** Carpeta por tipo de archivo
+**Dominio:** A — Mesa de ayuda  
+**Base de datos:** MongoDB + Mongoose  
+**Organización del backend:** Carpeta por tipo de archivo
 
 ## Integrantes
 
-- **PEREZ JACQUELINE, Anahi** 
-- **DUARTE OBED, Natanael**
+- **PEREZ JACQUELINE, Anahi** — [usuario de GitHub]
+- **DUARTE OBED, Natanael** — [usuario de GitHub]
 
 ## Descripción
 
