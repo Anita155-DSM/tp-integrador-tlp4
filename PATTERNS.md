@@ -8,17 +8,16 @@
 
 ```ts
 export class DatabaseConnection {
-    private static instance: DatabaseConnection | undefined;
-
-    private constructor() {}
-
-    static getInstance(): DatabaseConnection {
-        if (DatabaseConnection.instance === undefined) {
-            DatabaseConnection.instance = new DatabaseConnection();
-        }
-        return DatabaseConnection.instance;
+    private static instance: DatabaseConnection; //instance es de tipo databaseconection
+    private constructor(){ //tiene que ser privado para que no se pueda acceder dea fuera
     }
-}
+    static getInstance(): DatabaseConnection {  //sin static el metodo perteneceria  a una instancia y nuestro constructor es privado, entonces no se podria instanciar de afuera 
+        //una sola instancia
+        if (DatabaseConnection.instance === undefined){ //si es undefined instanciamos, ahora agregue el if porque sino no cumplia con el singleton ya que en cada llamada instanciaba, ahora si el valor es vacio instancia una sola vez y lo guarda:)
+            DatabaseConnection.instance = new DatabaseConnection() //instanciamos
+        }
+        return DatabaseConnection.instance //retornamos 
+    }
 ```
 
 ## Adapter
@@ -29,8 +28,8 @@ export class DatabaseConnection {
 
 ```ts
 export class ConsoleNotifierAdapter implements INotifier {
-    async send(notification: Notification): Promise<void> {
-        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`);
+    async send(notification: Notification): Promise<void>{
+        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`); //esta es la notificacion que se envia
     }
 }
 ```
@@ -39,23 +38,20 @@ export class ConsoleNotifierAdapter implements INotifier {
 
 **Archivos:** `backend/src/observer/ISubject.ts`, `backend/src/observer/IObserver.ts` y `backend/src/observer/EventPublisher.ts` (el lado Subject). El lado Observer, `backend/src/services/NotificationService.ts`, está detallado más abajo.
 
-**Problema que resuelve:** Cuando cambia el estado de un ticket, hay que avisar a alguien (las notificaciones), pero `TicketService` no debería saber quién recibe el aviso ni qué hace con él. El `EventPublisher` guarda una lista de interesados (los observers) y, cuando ocurre un evento, los avisa a todos con `notify`. Para sumar un interesado nuevo alcanza con hacer `attach`, sin tocar el servicio de tickets. Es genérico (`<TEvent>`) para poder usarlo con cualquier tipo de evento.
+**Problema que resuelve:** Cuando cambia el estado de un ticket, hay que avisar a alguien (las notificaciones), pero `TicketService` no debería saber quién recibe el aviso ni qué hace con él. El `EventPublisher` guarda una lista de interesados (los observers) y, cuando ocurre un evento, los avisa a todos con `notify`. Para sumar un interesado nuevo alcanza con hacer `attach`, sin tocar el servicio de tickets. Es genérico (`<TipoEvento>`) para poder usarlo con cualquier tipo de evento.
 
 ```ts
-export class EventPublisher<TEvent> implements ISubject<TEvent> {
-    private observers: IObserver<TEvent>[] = [];
-
-    attach(observer: IObserver<TEvent>): void {
-        this.observers.push(observer);
+export class EventPublisher<TipoEvento> implements ISubject<TipoEvento> {
+    private observers: IObserver<TipoEvento>[] = [];
+    attach(observer: IObserver<TipoEvento>): void {
+        this.observers.push(observer)
     }
-
-    detach(observer: IObserver<TEvent>): void {
+    detach(observer: IObserver<TipoEvento>): void {
         this.observers = this.observers.filter((o) => o !== observer);
     }
-
-    async notify(event: TEvent): Promise<void> {
-        for (const observer of this.observers) {
-            await observer.update(event);
+    async notify(event: TipoEvento): Promise<void> {
+        for (const observer of this.observers){ //en este caso, para cada observer de la lista observers, llama a su update con el evento   THIS.OBSERVER ES LA LISTA COMPLETA, o sea el array
+            await observer.update(event)
         }
     }
 }
@@ -125,7 +121,7 @@ export class EventPublisher<TEvent> implements ISubject<TEvent> {
 ```
 
 ```ts
-const notifiers = [notifierFactory.create("inapp"), notifierFactory.create("console")];
+    const notifiers = [notifierFactory.create("inapp"), notifierFactory.create("console")];
 ```
 
 ## Principios SOLID
@@ -137,9 +133,18 @@ const notifiers = [notifierFactory.create("inapp"), notifierFactory.create("cons
 **Problema que resuelve:** Cada capa tiene un solo trabajo. El controller recibe el pedido HTTP, valida lo que llega y responde. El service aplica las reglas de negocio (por ejemplo, que el email no esté repetido o que la contraseña coincida) y no sabe nada de `req` ni `res`. El repository es el único que habla con MongoDB. Gracias a esto, un cambio en la base de datos no obliga a tocar el controller.
 
 ```ts
-// AuthController: solo recibe el pedido y delega en el service
-const result = await this.authService.login(email, password);
-res.json(result);
+    login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { email, password } = req.body ?? {};
+            if (typeof email !== "string" || typeof password !== "string") {
+                throw AppError.BadRequest("Email y contraseña son obligatorios");
+            }
+            const result = await this.authService.login(email, password);
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    };
 ```
 
 ### O: Abierto/cerrado
@@ -204,6 +209,5 @@ export class UserService {
     constructor(
         private readonly users: IUserRepository,
         private readonly roles: IRoleRepository,
-    ) {}
-}
+    ) { }
 ```
