@@ -1,17 +1,18 @@
 # tp-integrador-tlp4
 
-**Dominio:** A — Mesa de ayuda
-**Base de datos:** MongoDB + Mongoose
-**Organización del backend:** Carpeta por tipo de archivo
+**Dominio:** A — Mesa de ayuda **Base de datos:** MongoDB + Mongoose **Organización del backend:** Carpeta por tipo de archivo
 
 ## Integrantes
-- [COMPLETAR Apellido], Ana — [COMPLETAR usuario de GitHub]
-- [COMPLETAR Apellido], Nata — [COMPLETAR usuario de GitHub]
+
+- **PEREZ JACQUELINE, Anahi** 
+- **DUARTE OBED, Natanael**
 
 ## Descripción
+
 Mesa de ayuda donde se cargan tickets que pasan por los estados `ABIERTO`, `EN_PROGRESO`, `RESUELTO` y `CERRADO`. Los usuarios pueden suscribirse a un ticket y, cada vez que cambia su estado, todos los suscriptores reciben una notificación en la bandeja de la aplicación y se registra una línea en la consola del backend. El acceso a cada acción está controlado por roles y permisos.
 
 ## Requisitos previos
+
 - Docker y Docker Compose
 - Git
 - (Opcional, para desarrollo local) Node.js 22 o superior
@@ -19,15 +20,18 @@ Mesa de ayuda donde se cargan tickets que pasan por los estados `ABIERTO`, `EN_P
 ## Cómo ejecutar el proyecto
 
 1. Clonar el repositorio:
+
    ```bash
    git clone https://github.com/Anita155-DSM/tp-integrador-tlp4.git
    cd tp-integrador-tlp4
    ```
 2. Crear el archivo de variables de entorno:
+
    ```bash
    cp .env.example .env
    ```
 3. Levantar los servicios:
+
    ```bash
    docker compose up --build
    ```
@@ -81,7 +85,7 @@ El frontend queda en http://localhost:5173 y usa `VITE_API_URL` (por defecto `ht
 ## Variables de entorno
 
 | Variable | Descripción | Ejemplo |
-|---|---|---|
+| --- | --- | --- |
 | `DB_HOST` | Host de la base de datos (solo sin Docker; en Compose el backend usa `db`) | `localhost` |
 | `DB_PORT` | Puerto de la base de datos | `27017` |
 | `DB_USER` | Usuario | `tlp4` |
@@ -94,7 +98,7 @@ El frontend queda en http://localhost:5173 y usa `VITE_API_URL` (por defecto `ht
 ## Usuarios de prueba
 
 | Rol | Email | Contraseña |
-|---|---|---|
+| --- | --- | --- |
 | admin | admin@tp.com | admin123 |
 | operador | operador@tp.com | operador123 |
 | usuario | usuario@tp.com | usuario123 |
@@ -102,20 +106,24 @@ El frontend queda en http://localhost:5173 y usa `VITE_API_URL` (por defecto `ht
 Permisos de cada rol:
 
 | Rol | Permisos |
-|---|---|
+| --- | --- |
 | usuario | `ticket:read`, `subscription:create`, `subscription:delete`, `notification:read` |
 | operador | los de usuario + `ticket:create`, `ticket:update`, `ticket:change-status` |
 | admin | los de operador + `ticket:delete`, `user:read`, `user:assign-role` |
 
 ## Cómo probar el flujo de notificaciones
+
 1. Ingresar como `usuario` y suscribirse a un ticket.
 2. En otra ventana (o en incógnito), ingresar como `operador` y cambiar el estado de ese ticket.
 3. Volver a la sesión de `usuario`: la notificación aparece en la bandeja.
 4. Verificar la notificación en la consola del backend:
+
    ```bash
    docker compose logs backend
    ```
+
    Debe aparecer una línea como:
+
    ```
    [NOTIFICACIÓN] Para: usuario@tp.com | Ticket #<id> | Estado: ABIERTO → EN_PROGRESO
    ```
@@ -125,7 +133,7 @@ Permisos de cada rol:
 Todas las rutas, salvo `register` y `login`, requieren el header `Authorization: Bearer <token>`. Sin token se responde `401`; sin el permiso, `403`; con un id de formato inválido, `400`.
 
 | Método | Ruta | Permiso requerido |
-|---|---|---|
+| --- | --- | --- |
 | POST | /api/auth/register | — |
 | POST | /api/auth/login | — |
 | GET | /api/auth/me | — (solo token) |
@@ -144,4 +152,5 @@ Todas las rutas, salvo `register` y `login`, requieren el header `Authorization:
 | PATCH | /api/notifications/:id/read | notification:read |
 
 ## Patrones y principios SOLID
+
 Ver [PATTERNS.md](./PATTERNS.md).
