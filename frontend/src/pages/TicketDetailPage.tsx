@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import {
   getTicket,
   subscribeToTicket,
   unsubscribeFromTicket,
   changeTicketStatus,
+  deleteTicket,
 } from "../api/tickets.api";
 import { Can } from "../components/Can";
 import type { TicketDetail, TicketStatus } from "../types";
@@ -13,6 +14,7 @@ const STATUSES: TicketStatus[] = ["ABIERTO", "EN_PROGRESO", "RESUELTO", "CERRADO
 
 export function TicketDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +64,19 @@ export function TicketDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (ticket === null) return;
+    if (!window.confirm(`¿Eliminar el ticket "${ticket.title}"?`)) return;
+    setWorking(true);
+    try {
+      await deleteTicket(ticket.id);
+      navigate("/tickets");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "No se pudo eliminar el ticket");
+      setWorking(false);
+    }
+  }
+
   if (loading) return <p>Cargando ticket...</p>;
   if (error !== null && ticket === null) return <p>{error}</p>;
   if (ticket === null) return <p>Ticket no encontrado.</p>;
@@ -92,6 +107,16 @@ export function TicketDetailPage() {
             ))}
           </select>
         </div>
+      </Can>
+
+      <Can permission="ticket:update">
+        <Link to={`/tickets/${ticket.id}/edit`}>Editar</Link>
+      </Can>
+
+      <Can permission="ticket:delete">
+        <button onClick={handleDelete} disabled={working}>
+          Eliminar
+        </button>
       </Can>
 
       {error !== null && <p>{error}</p>}

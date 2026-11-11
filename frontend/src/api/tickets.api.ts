@@ -16,6 +16,19 @@ export function createTicket(input: CreateTicketInput): Promise<Ticket> {
   });
 }
 
+export function updateTicket(id: string, input: CreateTicketInput): Promise<Ticket> {
+  return apiFetch<Ticket>(`/tickets/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteTicket(id: string): Promise<void> {
+  return apiFetch<void>(`/tickets/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export function changeTicketStatus(id: string, status: TicketStatus): Promise<TicketDetail> {
   return apiFetch<TicketDetail>(`/tickets/${id}/status`, {
     method: "PATCH",

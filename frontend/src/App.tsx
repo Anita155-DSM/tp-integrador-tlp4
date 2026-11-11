@@ -26,6 +26,10 @@ export function App() {
             <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
+          <Route element={<ProtectedRoute permission="ticket:update" />}>
+            <Route path="/tickets/:id/edit" element={<TicketFormPage />} />
+          </Route>
+
           <Route element={<ProtectedRoute permission="user:read" />}>
             <Route path="/admin/users" element={<AdminUserPage />} />
           </Route>
