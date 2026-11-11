@@ -21,9 +21,12 @@ export function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/tickets" element={<TicketListPage />} />
-            <Route path="/tickets/new" element={<TicketFormPage />} />
             <Route path="/tickets/:id" element={<TicketDetailPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute permission="ticket:create" />}>
+            <Route path="/tickets/new" element={<TicketFormPage />} />
           </Route>
 
           <Route element={<ProtectedRoute permission="ticket:update" />}>
