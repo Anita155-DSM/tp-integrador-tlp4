@@ -6,8 +6,8 @@
 
 ## Integrantes
 
-- **PEREZ JACQUELINE, Anahi** — [usuario de GitHub]
-- **DUARTE OBED, Natanael** — [usuario de GitHub]
+- **PEREZ JACQUELINE, Anahi** — Anita155-DSM
+- **DUARTE OBED, Natanael** — h1kkiii
 
 ## Descripción
 
