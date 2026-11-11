@@ -7,6 +7,11 @@ export class errorMiddleware {
             res.status(error.statusCode).json({ message: error.message})
             return;
         }
+        //si el body no es un JSON valido, express.json() tira un error con type 'entity.parse.failed', es culpa del cliente asi que va 400 y no 500
+        if (typeof error === "object" && error !== null && "type" in error && error.type === "entity.parse.failed"){
+            res.status(400).json({ message: "el cuerpo de la solicitud no es un JSON valido"})
+            return;
+        }
         console.error(error)
         res.status(500).json({message: "error interno del servidor"})
     }
