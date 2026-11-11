@@ -2,7 +2,7 @@
 
 Secuencia manual para verificar el núcleo del backend de punta a punta: crear ticket → suscribir un usuario → cambiar estado → ver la notificación en la bandeja y la línea `[NOTIFICACIÓN]` en consola. Es el mismo recorrido que se muestra en la defensa.
 
-Comandos para **PowerShell** (Windows), usando `Invoke-RestMethod`: arma el JSON a partir de un objeto (`@{...} | ConvertTo-Json`) y ya devuelve la respuesta parseada. El backend corre en el puerto **4000** (ajustar si `API_PORT` es otro).
+Comandos para **PowerShell** (Windows), usando `Invoke-RestMethod`: arma el JSON a partir de un objeto (`@{...} | ConvertTo-Json`) y ya devuelve la respuesta parseada. El backend corre en el puerto **3000** (ajustar si `API_PORT` es otro).
 
 > **Ojo con `curl.exe -d "{\"...\"}"`:** en Windows PowerShell 5.1 los JSON con espacios (ej. `"Impresora rota"`) llegan cortados al backend y dan error. Por eso los pasos usan `Invoke-RestMethod`.
 
@@ -33,8 +33,8 @@ Comandos para **PowerShell** (Windows), usando `Invoke-RestMethod`: arma el JSON
 ## Paso 0 — Login (operador y usuario)
 
 ```powershell
-$operador = (Invoke-RestMethod -Method Post http://localhost:4000/api/auth/login -ContentType "application/json" -Body (@{ email = "operador@tp.com"; password = "operador123" } | ConvertTo-Json)).token
-$usuario = (Invoke-RestMethod -Method Post http://localhost:4000/api/auth/login -ContentType "application/json" -Body (@{ email = "usuario@tp.com"; password = "usuario123" } | ConvertTo-Json)).token
+$operador = (Invoke-RestMethod -Method Post http://localhost:3000/api/auth/login -ContentType "application/json" -Body (@{ email = "operador@tp.com"; password = "operador123" } | ConvertTo-Json)).token
+$usuario = (Invoke-RestMethod -Method Post http://localhost:3000/api/auth/login -ContentType "application/json" -Body (@{ email = "usuario@tp.com"; password = "usuario123" } | ConvertTo-Json)).token
 $operador
 ```
 
@@ -43,7 +43,7 @@ $operador
 ## Paso 1 — El operador crea un ticket
 
 ```powershell
-$ticket = Invoke-RestMethod -Method Post http://localhost:4000/api/tickets -ContentType "application/json" -Headers @{ Authorization = "Bearer $operador" } -Body (@{ title = "Impresora rota"; description = "No imprime nada" } | ConvertTo-Json)
+$ticket = Invoke-RestMethod -Method Post http://localhost:3000/api/tickets -ContentType "application/json" -Headers @{ Authorization = "Bearer $operador" } -Body (@{ title = "Impresora rota"; description = "No imprime nada" } | ConvertTo-Json)
 $ticketId = $ticket.id
 $ticket
 ```
@@ -53,7 +53,7 @@ $ticket
 ## Paso 2 — El usuario se suscribe
 
 ```powershell
-Invoke-RestMethod -Method Post http://localhost:4000/api/subscriptions -ContentType "application/json" -Headers @{ Authorization = "Bearer $usuario" } -Body (@{ ticketId = $ticketId } | ConvertTo-Json)
+Invoke-RestMethod -Method Post http://localhost:3000/api/subscriptions -ContentType "application/json" -Headers @{ Authorization = "Bearer $usuario" } -Body (@{ ticketId = $ticketId } | ConvertTo-Json)
 ```
 
 **Esperado:** el ticket con `isSubscribed: true`.
@@ -61,7 +61,7 @@ Invoke-RestMethod -Method Post http://localhost:4000/api/subscriptions -ContentT
 ## Paso 3 — El operador cambia el estado (dispara la notificación)
 
 ```powershell
-Invoke-RestMethod -Method Patch http://localhost:4000/api/tickets/$ticketId/status -ContentType "application/json" -Headers @{ Authorization = "Bearer $operador" } -Body (@{ status = "EN_PROGRESO" } | ConvertTo-Json)
+Invoke-RestMethod -Method Patch http://localhost:3000/api/tickets/$ticketId/status -ContentType "application/json" -Headers @{ Authorization = "Bearer $operador" } -Body (@{ status = "EN_PROGRESO" } | ConvertTo-Json)
 ```
 
 **Esperado:**
@@ -71,7 +71,7 @@ Invoke-RestMethod -Method Patch http://localhost:4000/api/tickets/$ticketId/stat
 ## Paso 4 — El usuario ve su bandeja
 
 ```powershell
-$notifs = Invoke-RestMethod http://localhost:4000/api/notifications -Headers @{ Authorization = "Bearer $usuario" }
+$notifs = Invoke-RestMethod http://localhost:3000/api/notifications -Headers @{ Authorization = "Bearer $usuario" }
 $notifs
 ```
 
@@ -80,7 +80,7 @@ $notifs
 ## Paso 5 — Contador de no leídas
 
 ```powershell
-Invoke-RestMethod http://localhost:4000/api/notifications/unread-count -Headers @{ Authorization = "Bearer $usuario" }
+Invoke-RestMethod http://localhost:3000/api/notifications/unread-count -Headers @{ Authorization = "Bearer $usuario" }
 ```
 
 **Esperado:** `count: 1`.
@@ -88,7 +88,7 @@ Invoke-RestMethod http://localhost:4000/api/notifications/unread-count -Headers 
 ## Paso 6 (opcional) — Marcar como leída
 
 ```powershell
-Invoke-RestMethod -Method Patch http://localhost:4000/api/notifications/$($notifs[0].id)/read -Headers @{ Authorization = "Bearer $usuario" }
+Invoke-RestMethod -Method Patch http://localhost:3000/api/notifications/$($notifs[0].id)/read -Headers @{ Authorization = "Bearer $usuario" }
 ```
 
 **Esperado:** la notificación con `read: true`. Y volver a correr el Paso 5 debería dar `count: 0`.
@@ -101,17 +101,17 @@ Acá se usa `curl.exe -i` porque muestra el código de estado en la primera lín
 
 Sin token → **401**:
 ```powershell
-curl.exe -i http://localhost:4000/api/tickets
+curl.exe -i http://localhost:3000/api/tickets
 ```
 
 El usuario común intenta crear un ticket (no tiene `ticket:create`) → **403**:
 ```powershell
-curl.exe -i -X POST http://localhost:4000/api/tickets -H "Content-Type: application/json" -H "Authorization: Bearer $usuario" -d "{}"
+curl.exe -i -X POST http://localhost:3000/api/tickets -H "Content-Type: application/json" -H "Authorization: Bearer $usuario" -d "{}"
 ```
 
 JSON mal formado → **400** (no 500):
 ```powershell
-curl.exe -i -X POST http://localhost:4000/api/auth/login -H "Content-Type: application/json" -d "{roto"
+curl.exe -i -X POST http://localhost:3000/api/auth/login -H "Content-Type: application/json" -d "{roto"
 ```
 
 ---
