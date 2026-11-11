@@ -1,4 +1,3 @@
-// console.log('Backend TP integrador iniciado'); //no hace nada
 import { DatabaseConnection } from "./database/DatabaseConnection.js";
 import { App } from "./app.js";
 import { errorMiddleware } from "./middlewares/ErrorMiddleware.js";
