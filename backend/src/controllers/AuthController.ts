@@ -36,7 +36,7 @@ export class AuthController {
             next(error);
         }
     };
-    //nuevo metodo me
+    // devuelve el usuario autenticado que cargó AuthMiddleware
     me = (req: Request, res: Response): void => {
         res.json(req.user);
     };

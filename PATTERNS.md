@@ -8,15 +8,14 @@
 
 ```ts
 export class DatabaseConnection {
-    private static instance: DatabaseConnection; //instance es de tipo databaseconection
-    private constructor(){ //tiene que ser privado para que no se pueda acceder dea fuera
+    private static instance: DatabaseConnection;
+    private constructor(){ // privado: nadie puede hacer new DatabaseConnection() desde afuera
     }
-    static getInstance(): DatabaseConnection {  //sin static el metodo perteneceria  a una instancia y nuestro constructor es privado, entonces no se podria instanciar de afuera 
-        //una sola instancia
-        if (DatabaseConnection.instance === undefined){ //si es undefined instanciamos, ahora agregue el if porque sino no cumplia con el singleton ya que en cada llamada instanciaba, ahora si el valor es vacio instancia una sola vez y lo guarda:)
-            DatabaseConnection.instance = new DatabaseConnection() //instanciamos
+    static getInstance(): DatabaseConnection {
+        if (DatabaseConnection.instance === undefined){ // se crea solo la primera vez; las siguientes llamadas devuelven la misma instancia
+            DatabaseConnection.instance = new DatabaseConnection()
         }
-        return DatabaseConnection.instance //retornamos 
+        return DatabaseConnection.instance
     }
 ```
 
@@ -29,7 +28,7 @@ export class DatabaseConnection {
 ```ts
 export class ConsoleNotifierAdapter implements INotifier {
     async send(notification: Notification): Promise<void>{
-        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`); //esta es la notificacion que se envia
+        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`);
     }
 }
 ```
@@ -50,7 +49,7 @@ export class EventPublisher<TipoEvento> implements ISubject<TipoEvento> {
         this.observers = this.observers.filter((o) => o !== observer);
     }
     async notify(event: TipoEvento): Promise<void> {
-        for (const observer of this.observers){ //en este caso, para cada observer de la lista observers, llama a su update con el evento   THIS.OBSERVER ES LA LISTA COMPLETA, o sea el array
+        for (const observer of this.observers){ // avisa a cada observer registrado llamando a su update
             await observer.update(event)
         }
     }
@@ -178,7 +177,7 @@ export interface INotifier {
 ```ts
 export class ConsoleNotifierAdapter implements INotifier {
     async send(notification: Notification): Promise<void>{
-        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`); //esta es la notificacion que se envia
+        console.log(`[NOTIFICACIÓN] Para: ${notification.userEmail} | Ticket #${notification.ticketId} | Estado: ${notification.previousStatus} → ${notification.newStatus}`);
     }
 }
 ```

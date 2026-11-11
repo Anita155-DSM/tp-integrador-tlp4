@@ -10,7 +10,7 @@ export class EventPublisher<TipoEvento> implements ISubject<TipoEvento> {
         this.observers = this.observers.filter((o) => o !== observer);
     }
     async notify(event: TipoEvento): Promise<void> {
-        for (const observer of this.observers){ //en este caso, para cada observer de la lista observers, llama a su update con el evento   THIS.OBSERVER ES LA LISTA COMPLETA, o sea el array
+        for (const observer of this.observers){ // avisa a cada observer registrado llamando a su update
             await observer.update(event)
         }
     }

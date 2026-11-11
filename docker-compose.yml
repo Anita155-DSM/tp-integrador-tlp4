@@ -2,12 +2,12 @@ services:
   db:
     image: mongo:7
     container_name: tp_mongo # nombre fijo del contenedor
-    restart: unless-stopped # si se cae o reiniciás la compu, vuelve a arrancar solo
+    restart: unless-stopped # si se cae o se reinicia Docker, vuelve a arrancar solo
     environment: # variables que recibe MongoDB DENTRO del contenedor
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_NAME}
-    ports: # puerto de la compu : puerto dentro del contenedor
+    ports: # puerto del host : puerto dentro del contenedor
       - "${DB_PORT}:27017"
     volumes:
       - mongo_data:/data/db
@@ -41,8 +41,8 @@ services:
     build:
       context: ./frontend
       args:
-        # VITE_API_URL se "hornea" al compilar, por eso va como build arg.
-        # la abre el navegador, así que apunta a localhost, no al nombre del servicio.
+        # VITE_API_URL queda fija al compilar el frontend, por eso va como build arg.
+        # la usa el navegador, así que apunta a localhost, no al nombre del servicio.
         VITE_API_URL: ${VITE_API_URL}
     container_name: tp_frontend
     restart: unless-stopped

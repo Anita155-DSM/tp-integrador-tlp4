@@ -12,7 +12,7 @@ export class AuthRoutes {
         const router = Router();
         router.post("/register", this.controller.register);
         router.post("/login", this.controller.login);
-        router.get("/me", this.authMiddleware.authenticate, this.controller.me); //nueva ruta, con lo el metodo me que agregamos en nuestro controlador
+        router.get("/me", this.authMiddleware.authenticate, this.controller.me);
         return router;
     }
 }

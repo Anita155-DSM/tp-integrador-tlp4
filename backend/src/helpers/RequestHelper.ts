@@ -20,7 +20,7 @@ export class RequestHelper {
         return value;
     }
 
-    //un id con formato invalido es culpa del cliente: 400 en vez de dejar que mongoose tire CastError (500)
+    //un id con formato inválido es un error del cliente: 400 en vez de dejar que mongoose lance CastError (500)
     static requireObjectId(value: unknown, message: string = "Id inválido"): string {
         if (typeof value !== "string" || !RequestHelper.OBJECT_ID_PATTERN.test(value)) {
             throw AppError.BadRequest(message);

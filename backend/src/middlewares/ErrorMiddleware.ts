@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../errors/AppError.js";
 
 export class errorMiddleware {
-    handle= (error: unknown, _req: Request, res: Response, _next: NextFunction): void => { //el error puede ser cualquier cosa, usamos unknown para que no sea any
+    handle= (error: unknown, _req: Request, res: Response, _next: NextFunction): void => { // el error puede ser cualquier cosa: se usa unknown en vez de any
         if (error instanceof AppError){
             res.status(error.statusCode).json({ message: error.message})
             return;
         }
-        //si el body no es un JSON valido, express.json() tira un error con type 'entity.parse.failed', es culpa del cliente asi que va 400 y no 500
+        //si el body no es un JSON válido, express.json() lanza un error con type 'entity.parse.failed': es un error del cliente, así que va 400 y no 500
         if (typeof error === "object" && error !== null && "type" in error && error.type === "entity.parse.failed"){
             res.status(400).json({ message: "el cuerpo de la solicitud no es un JSON valido"})
             return;

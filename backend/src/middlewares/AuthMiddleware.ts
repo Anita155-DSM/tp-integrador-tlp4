@@ -3,10 +3,10 @@ import type { AuthService, AuthUser } from "../services/AuthService.js";
 import type { JwtService } from "../helpers/JwtService.js";
 import { AppError } from "../errors/AppError.js";
 
-declare global {   //si no lo declaramos, da el error 'user' does not exist on type 'Request', porque express tiene su request y no agregamos user dentro del request, y es global porque lo declaramos global no solo a este archivo
+declare global { // agrega la propiedad user al Request de Express para todo el proyecto
     namespace Express { 
-        interface Request {  //se fusiona con la interfaz llamada igual que ella, es como agregar una nueva casilla
-            user?: AuthUser; //? quiere decir opciobnal
+        interface Request {
+            user?: AuthUser;
         }
     }
 }

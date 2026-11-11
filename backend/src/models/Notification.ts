@@ -14,14 +14,14 @@ export interface INotification {
 
 export type NotificationDocument = HydratedDocument<INotification>;
 
-/* Extiende Document implicitamente al crearse con el modelo, aca se describen sus campos */
+/* Extiende Document implícitamente al crearse con el modelo; acá se describen sus campos */
 export interface INotificationDocument {
-  user: Types.ObjectId;   //a quien le pertenece la notificacion
-  ticket: Types.ObjectId;  //de que ticket salio
-  ticketTitle: string;  //titulo congelado al momento del aviso
+  user: Types.ObjectId;   //a quién le pertenece la notificación
+  ticket: Types.ObjectId;  //de qué ticket salió
+  ticketTitle: string;  //título congelado al momento del aviso
   previousStatus: TicketStatus;  //estado anterior
   newStatus: TicketStatus;  //estado nuevo
-  read: boolean;  //leida, no leida
+  read: boolean;  //leída o no leída
   createdAt: Date;
   updatedAt: Date;
 }

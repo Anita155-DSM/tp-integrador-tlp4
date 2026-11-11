@@ -1,4 +1,4 @@
-// aca iria toda nuestra regla de negocio donde implementamos todo lo anterior trabajado, osea repositorios, PasswordHasher y JwtService
+// Reglas de negocio de registro y login: usa los repositorios, PasswordHasher y JwtService.
 
 import type { IUserRepository } from "../repositories/interfaces/IUserRepository.js";
 import type { IRoleRepository } from "../repositories/interfaces/IRoleRepository.js";

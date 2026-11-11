@@ -9,19 +9,19 @@ export class App {
     constructor(){
         this.app= express()
         this.app.use(cors())
-        this.app.use(express.json()) //convierte el cuerpo json a un objeto
+        this.app.use(express.json())
         this.app.get("/api/health", (_req, res)=>{
-            res.json({"status": "ok"}) //si consultan a esta ruta, le dice el estado
+            res.json({"status": "ok"})
         })
 
     }
-    registerRouter(path: string, router: Router): void{//recibe un path y un router
+    registerRouter(path: string, router: Router): void{
         this.app.use(path, router)
     }
     registerErrorHandler(handler: ErrorRequestHandler): void {
        this.app.use(handler);
     }
     start(): void {
-        this.app.listen(Env.API_PORT, ()=> { console.log(`puerto escuchando al ${Env.API_PORT}`)}) //aca le decimos que escuche el puerto de mi variable de entorno
+        this.app.listen(Env.API_PORT, ()=> { console.log(`puerto escuchando al ${Env.API_PORT}`)})
     }
 }

@@ -1,5 +1,4 @@
-//ahora trabajamos el manejo de errores, paraest oel appError
-//se sabe que cuando un error ocurre nuestro service tiene que parar y avisar, pero tambien para esto, nostros necesitamos codigo http y msj de error, eso es lo que hace nuestro appError, ya que un error comun solo trae msj
+// Error con código HTTP: los services lo lanzan y ErrorMiddleware lo convierte en la respuesta.
 
 export class AppError extends Error{
     public readonly statusCode: number;
@@ -7,7 +6,7 @@ export class AppError extends Error{
         super(message) 
         this.statusCode = statusCode;
     }
-    static BadRequest(message: string = "DATOS INVALIDOS"): AppError { //lo que hacemos aca lo entendemos como message es un texto, y si no me pasan ninguno, su valor es 'DATOS INVALIDOS'
+    static BadRequest(message: string = "DATOS INVALIDOS"): AppError {
         return new AppError(message, 400);
     }
     static Unauthorized(message: string = "sin sesion o sin token valido"): AppError {

@@ -1,8 +1,5 @@
-//los Observers (NotificationService) son los interesados, se anotan en la lista (attach), se pueden borrar de ella (detach) y reciben el aviso con un método update
-//update viene de iObserver.ts
-
-// attach(observer: IObserver<T>): void, detach(observer: IObserver<T>): void y notify(event: T): Promise<void>
-import { IObserver } from "./IObserver.js" //importamos el observer
+// Subject: los observers se anotan con attach, se quitan con detach y reciben el aviso por notify (que llama a su update).
+import { IObserver } from "./IObserver.js"
 
 export interface ISubject<TipoEvento> {
     attach(observer: IObserver<TipoEvento>): void;

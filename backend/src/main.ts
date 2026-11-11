@@ -11,7 +11,7 @@ import { AuthService } from "./services/AuthService.js";
 import { AuthController } from "./controllers/AuthController.js";
 import { AuthMiddleware } from "./middlewares/AuthMiddleware.js";
 import { AuthorizeMiddleware } from "./middlewares/AuthorizeMiddleware.js";
-import { UserService } from "./services/UserService.js"; //importaciones para administracion de usuario, nuevo trabajado, de aca hasta userroutes:)
+import { UserService } from "./services/UserService.js";
 import { UserController } from "./controllers/UserController.js";
 import { UserRoutes } from "./routes/UserRoutes.js";
 import { TicketRepository } from "./repositories/TicketRepository.js";
@@ -33,7 +33,7 @@ import type { TicketStatusChangedEvent } from "./notifications/TicketStatusChang
 
 try {
     await DatabaseConnection.getInstance().connectDB()
-    const app = new App() //aca crea el servidor Express, o sea aca va el new, porque main.ts es el unico lugar donde se crean las piezas
+    const app = new App() // composition root: main.ts es el único lugar donde se crean y conectan las piezas
 
     const roleRepository = new RoleRepository()
     const userRepository = new UserRepository();
@@ -42,7 +42,7 @@ try {
 
     await new Seed(roleRepository, userRepository, passwordHasher).run();
 
-    // ESTO ES TODO LO QUE ES Autenticación
+    // autenticación
     const authService = new AuthService(userRepository, roleRepository, passwordHasher, jwtService);
     const authController = new AuthController(authService);
     const authMiddleware = new AuthMiddleware(jwtService, authService);
@@ -94,8 +94,8 @@ try {
     );
 
     app.registerErrorHandler(new errorMiddleware().handle);
-    app.start()//inicializa el servidor
+    app.start()
 } catch (error) {
     console.error(error)
-    process.exit(1)//apaga o corta el servidor paera q no se levante
+    process.exit(1) // si falla el arranque, el proceso termina con error
 }
