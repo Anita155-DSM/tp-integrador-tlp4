@@ -6,6 +6,7 @@ import {
   unsubscribeFromTicket,
   changeTicketStatus,
 } from "../api/tickets.api";
+import { Can } from "../components/Can";
 import type { TicketDetail, TicketStatus } from "../types";
 
 const STATUSES: TicketStatus[] = ["ABIERTO", "EN_PROGRESO", "RESUELTO", "CERRADO"];
@@ -75,21 +76,23 @@ export function TicketDetailPage() {
         {ticket.isSubscribed ? "Desuscribirse" : "Suscribirse"}
       </button>
 
-      <div>
-        <label htmlFor="status">Cambiar estado: </label>
-        <select
-          id="status"
-          value={ticket.status}
-          disabled={working}
-          onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
-        >
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Can permission="ticket:change-status">
+        <div>
+          <label htmlFor="status">Cambiar estado: </label>
+          <select
+            id="status"
+            value={ticket.status}
+            disabled={working}
+            onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Can>
 
       {error !== null && <p>{error}</p>}
     </section>
